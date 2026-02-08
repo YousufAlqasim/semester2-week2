@@ -20,10 +20,11 @@ def customer_tickets(conn, customer_id):
     """
     query ="""SELECT f.title, s.screen, t.price
     FROM tickets t
-    JOIN c.customer_id=t.customer_id
-    JOIN screening s ON s.screening_id=t.screening_ID
-    WHERE customer_id=?
-    ORDER BY t.film ASC"""
+    JOIN customers c ON c.customer_id=t.customer_id
+    JOIN screenings s ON s.screening_id=t.screening_ID
+    JOIN films f ON s.film_id=f.film_id
+    WHERE t.customer_id=?
+    ORDER BY f.title ASC"""
 
     cursor = conn.cursor()
     cursor.execute(query, (customer_id,))
