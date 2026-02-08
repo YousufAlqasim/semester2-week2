@@ -108,6 +108,7 @@ def total_spent():
     return(categories)
 
 def orders_per_category():
+    
     query ="""SELECT p.category, COUNT(o.order_id) AS total_orders
     FROM orders o
     JOIN order_items oi ON o.order_id=oi.order_id
