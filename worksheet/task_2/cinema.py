@@ -6,9 +6,7 @@ You must NOT change the function definitions (names, arguments).
 You can run the functions you define in this file by using test.py (python test.py)
 Please do not add any additional code underneath these functions.
 """
-
 import sqlite3
-
 
 def customer_tickets(conn, customer_id):
     """
@@ -31,7 +29,6 @@ def customer_tickets(conn, customer_id):
     results = cursor.fetchall()
     return results
 
-
 def screening_sales(conn):
     """
     Return a list of tuples:
@@ -40,8 +37,16 @@ def screening_sales(conn):
     Include all screenings, even if tickets_sold is 0.
     Order results by tickets_sold descending.
     """
+    query ="""SELECT s.screening_id, f.title, COUNT(t.ticket_id) AS tickets_sold
+    FROM screenings s LEFT JOIN tickets t ON s.screening_id=t.screening_id
+    JOIN films f ON f.film_id=s.film_id
+    GROUP BY s.screening_id, f.title
+    ORDER BY tickets_sold DESC"""
     
-
+    cursor = conn.cursor()
+    cursor.execute(query)
+    results = cursor.fetchall()
+    return results
 
 def top_customers_by_spend(conn, limit):
     """
@@ -53,4 +58,13 @@ def top_customers_by_spend(conn, limit):
     Order by total_spent descending.
     Limit the number of rows returned to `limit`.
     """
+    query ="""SELECT c.customer_name, SUM(t.price) AS total_spent
+    FROM tickets t JOIN customers c ON c.customer_id=t.customer_id
+    GROUP BY c.customer_name
+    ORDER BY total_spent DESC
+    LIMIT ?"""
     
+    cursor = conn.cursor()
+    cursor.execute(query,(limit,))
+    results = cursor.fetchall()
+    return results
